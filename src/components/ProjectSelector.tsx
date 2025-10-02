@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Folder, Search, AlertCircle } from 'lucide-react';
+import { Folder, Search, AlertCircle, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { GitLabService } from '@/services/gitlab';
 import type { GitLabProject } from '@/types/gitlab';
+
+const STORAGE_KEY = 'gitlab_projects_cache';
+const LAST_SYNC_KEY = 'gitlab_last_sync';
 
 interface ProjectSelectorProps {
   gitlabService: GitLabService;
@@ -15,11 +19,13 @@ export function ProjectSelector({ gitlabService, onProjectSelect }: ProjectSelec
   const [projects, setProjects] = useState<GitLabProject[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<GitLabProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [lastSync, setLastSync] = useState<string | null>(null);
 
   useEffect(() => {
-    loadProjects();
+    loadProjectsFromCache();
   }, []);
 
   useEffect(() => {
@@ -35,17 +41,62 @@ export function ProjectSelector({ gitlabService, onProjectSelect }: ProjectSelec
     }
   }, [searchQuery, projects]);
 
-  const loadProjects = async () => {
+  const loadProjectsFromCache = () => {
     try {
-      setIsLoading(true);
+      const cached = localStorage.getItem(STORAGE_KEY);
+      const lastSyncDate = localStorage.getItem(LAST_SYNC_KEY);
+      
+      if (cached) {
+        const projectsData = JSON.parse(cached);
+        setProjects(projectsData);
+        setFilteredProjects(projectsData);
+        setLastSync(lastSyncDate);
+        setIsLoading(false);
+      } else {
+        // Se não tem cache, sincroniza automaticamente
+        syncProjects();
+      }
+    } catch (err) {
+      console.error('Erro ao carregar cache:', err);
+      syncProjects();
+    }
+  };
+
+  const syncProjects = async () => {
+    try {
+      setIsSyncing(true);
+      setError('');
       const projectsData = await gitlabService.getProjects();
+      
+      // Salva no localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projectsData));
+      const syncDate = new Date().toISOString();
+      localStorage.setItem(LAST_SYNC_KEY, syncDate);
+      
       setProjects(projectsData);
       setFilteredProjects(projectsData);
+      setLastSync(syncDate);
     } catch (err) {
-      setError('Erro ao carregar projetos. Verifique suas permissões.');
+      setError('Erro ao sincronizar projetos. Verifique suas permissões.');
     } finally {
+      setIsSyncing(false);
       setIsLoading(false);
     }
+  };
+
+  const formatLastSync = (dateString: string | null) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return 'agora mesmo';
+    if (diffMins < 60) return `há ${diffMins} min`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `há ${diffHours}h`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `há ${diffDays}d`;
   };
 
   if (isLoading) {
@@ -65,16 +116,32 @@ export function ProjectSelector({ gitlabService, onProjectSelect }: ProjectSelec
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold">Seus Projetos GitLab</h1>
           <p className="text-muted-foreground">Selecione um projeto para visualizar sua wiki</p>
+          {lastSync && (
+            <p className="text-xs text-muted-foreground">
+              Última sincronização: {formatLastSync(lastSync)}
+            </p>
+          )}
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input
-            placeholder="Buscar projetos..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-12"
-          />
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              placeholder="Buscar projetos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-12"
+            />
+          </div>
+          <Button
+            onClick={syncProjects}
+            disabled={isSyncing}
+            className="h-12 px-6"
+            variant="outline"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+            {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
+          </Button>
         </div>
 
         {error && (
