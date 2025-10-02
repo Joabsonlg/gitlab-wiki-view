@@ -1,14 +1,57 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import { LoginPage } from '@/components/LoginPage';
+import { ProjectSelector } from '@/components/ProjectSelector';
+import { WikiViewer } from '@/components/WikiViewer';
+import { GitLabService } from '@/services/gitlab';
+import type { GitLabProject } from '@/types/gitlab';
+
+type View = 'login' | 'projects' | 'wiki';
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [currentView, setCurrentView] = useState<View>('login');
+  const [gitlabService, setGitlabService] = useState<GitLabService | null>(null);
+  const [selectedProject, setSelectedProject] = useState<GitLabProject | null>(null);
+
+  const handleLogin = (token: string) => {
+    const service = new GitLabService(token);
+    setGitlabService(service);
+    setCurrentView('projects');
+  };
+
+  const handleProjectSelect = (project: GitLabProject) => {
+    setSelectedProject(project);
+    setCurrentView('wiki');
+  };
+
+  const handleBackToProjects = () => {
+    setSelectedProject(null);
+    setCurrentView('projects');
+  };
+
+  if (currentView === 'login') {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  if (currentView === 'projects' && gitlabService) {
+    return (
+      <ProjectSelector
+        gitlabService={gitlabService}
+        onProjectSelect={handleProjectSelect}
+      />
+    );
+  }
+
+  if (currentView === 'wiki' && gitlabService && selectedProject) {
+    return (
+      <WikiViewer
+        project={selectedProject}
+        gitlabService={gitlabService}
+        onBack={handleBackToProjects}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default Index;
