@@ -1,73 +1,105 @@
-# Welcome to your Lovable project
+# GitLab Wiki Viewer
 
-## Project info
+## Sobre o Projeto
 
-**URL**: https://lovable.dev/projects/fa331638-e5cf-4268-82ab-d468fa0c17db
+O GitLab Wiki Viewer é uma aplicação web moderna para visualizar e navegar pela documentação wiki dos seus projetos GitLab de forma simples e eficiente. Desenvolvido com tecnologias modernas para oferecer uma experiência de usuário fluida e responsiva.
 
-## How can I edit this code?
+**Autor**: Joabson
 
-There are several ways of editing your application.
+## Tecnologias Utilizadas
 
-**Use Lovable**
+- **Vite** - Build tool rápido e moderno
+- **React** - Biblioteca para criação de interfaces de usuário
+- **TypeScript** - Superset do JavaScript com tipagem estática
+- **shadcn/ui** - Componentes de UI modernos e acessíveis
+- **Tailwind CSS** - Framework CSS utilitário
+- **React Router** - Roteamento para aplicações React
+- **Axios** - Cliente HTTP para requisições
+- **React Query** - Gerenciamento de estado para requisições
+- **React Hook Form** - Gerenciamento de formulários
+- **Zod** - Validação de schemas TypeScript
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fa331638-e5cf-4268-82ab-d468fa0c17db) and start prompting.
+## Como Executar Localmente
 
-Changes made via Lovable will be committed automatically to this repo.
+### Pré-requisitos
 
-**Use your preferred IDE**
+- Node.js (versão 16 ou superior)
+- npm ou yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Instalação
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# Clone o repositório
+git clone https://github.com/Joabsonlg/gitlab-wiki-view.git
 
-Follow these steps:
+# Navegue para o diretório do projeto
+cd gitlab-wiki-view
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Instale as dependências
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+O projeto estará disponível em `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Scripts Disponíveis
 
-**Use GitHub Codespaces**
+- `npm run dev` - Inicia o servidor de desenvolvimento
+- `npm run build` - Gera a build de produção
+- `npm run preview` - Visualiza a build de produção
+- `npm run lint` - Executa o linter para verificar a qualidade do código
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deploy no GitHub Pages
 
-## What technologies are used for this project?
+Este projeto está configurado para deploy automático no GitHub Pages através do GitHub Actions.
 
-This project is built with:
+### Configuração Automática
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Faça push do código para o repositório no GitHub
+2. Vá em **Settings** > **Pages** no seu repositório
+3. Selecione **GitHub Actions** como source
+4. O deploy será executado automaticamente a cada push na branch `main`
 
-## How can I deploy this project?
+### URL de Acesso
 
-Simply open [Lovable](https://lovable.dev/projects/fa331638-e5cf-4268-82ab-d468fa0c17db) and click on Share -> Publish.
+Após o deploy, a aplicação estará disponível em:
+`https://joabsonlg.github.io/gitlab-wiki-view/`
 
-## Can I connect a custom domain to my Lovable project?
+## Estrutura do Projeto
 
-Yes, you can!
+```
+src/
+├── components/          # Componentes React
+│   ├── ui/             # Componentes de UI reutilizáveis
+│   ├── LoginPage.tsx   # Página de login
+│   ├── ProjectSelector.tsx  # Seletor de projetos
+│   └── WikiViewer.tsx  # Visualizador de wiki
+├── hooks/              # Custom hooks
+├── lib/                # Utilitários e helpers
+├── pages/              # Páginas da aplicação
+├── services/           # Serviços de API
+└── types/              # Definições de tipos TypeScript
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Funcionalidades
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- 🔐 Autenticação com GitLab
+- 📁 Seleção de projetos
+- 📖 Visualização de páginas wiki
+- 🎨 Interface moderna e responsiva
+- 🌙 Suporte a tema escuro/claro
+- 📱 Design mobile-first
+
+## Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+
+## Licença
+
+Este projeto é de código aberto e está disponível sob a licença MIT.
+
+---
+
+Desenvolvido com ❤️ por Joabson
