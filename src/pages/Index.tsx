@@ -12,8 +12,8 @@ const Index = () => {
   const [gitlabService, setGitlabService] = useState<GitLabService | null>(null);
   const [selectedProject, setSelectedProject] = useState<GitLabProject | null>(null);
 
-  const handleLogin = (token: string) => {
-    const service = new GitLabService(token);
+  const handleLogin = (token: string, gitlabUrl: string) => {
+    const service = new GitLabService(token, gitlabUrl);
     setGitlabService(service);
     setCurrentView('projects');
   };

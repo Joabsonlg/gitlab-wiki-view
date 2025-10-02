@@ -1,16 +1,18 @@
 import axios from 'axios';
 import type { GitLabProject, GitLabWikiPage, GitLabWikiPageContent } from '@/types/gitlab';
 
-const GITLAB_API_URL = 'https://gitlab.com/api/v4';
-
 export class GitLabService {
   private token: string;
   private axiosInstance;
 
-  constructor(token: string) {
+  constructor(token: string, gitlabUrl: string = 'https://gitlab.com') {
     this.token = token;
+    // Ensure URL has https:// protocol
+    const baseUrl = gitlabUrl.startsWith('http') ? gitlabUrl : `https://${gitlabUrl}`;
+    const apiUrl = `${baseUrl}/api/v4`;
+    
     this.axiosInstance = axios.create({
-      baseURL: GITLAB_API_URL,
+      baseURL: apiUrl,
       headers: {
         'PRIVATE-TOKEN': token,
       },

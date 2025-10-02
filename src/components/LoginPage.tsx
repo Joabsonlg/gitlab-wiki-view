@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GitBranch, Key, AlertCircle } from 'lucide-react';
+import { GitBranch, Key, AlertCircle, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,11 +7,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { GitLabService } from '@/services/gitlab';
 
 interface LoginPageProps {
-  onLogin: (token: string) => void;
+  onLogin: (token: string, gitlabUrl: string) => void;
 }
 
 export function LoginPage({ onLogin }: LoginPageProps) {
   const [token, setToken] = useState('');
+  const [gitlabUrl, setGitlabUrl] = useState('https://gitlab.com');
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,20 +22,25 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       return;
     }
 
+    if (!gitlabUrl.trim()) {
+      setError('Por favor, insira a URL da instância do GitLab.');
+      return;
+    }
+
     setIsValidating(true);
     setError('');
 
     try {
-      const gitlabService = new GitLabService(token);
+      const gitlabService = new GitLabService(token, gitlabUrl);
       const isValid = await gitlabService.validateToken();
 
       if (isValid) {
-        onLogin(token);
+        onLogin(token, gitlabUrl);
       } else {
         setError('Token inválido. Verifique e tente novamente.');
       }
     } catch (err) {
-      setError('Erro ao validar token. Verifique sua conexão e tente novamente.');
+      setError('Erro ao validar token. Verifique sua conexão e a URL da instância.');
     } finally {
       setIsValidating(false);
     }
@@ -62,6 +68,25 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         </CardHeader>
 
         <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="gitlabUrl" className="text-sm font-medium flex items-center gap-2">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              Instância do GitLab
+            </label>
+            <Input
+              id="gitlabUrl"
+              type="url"
+              placeholder="https://gitlab.com ou https://projetos.imd.ufrn.br"
+              value={gitlabUrl}
+              onChange={(e) => setGitlabUrl(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="h-11"
+            />
+            <p className="text-xs text-muted-foreground">
+              URL da sua instância do GitLab (ex: gitlab.com, projetos.imd.ufrn.br)
+            </p>
+          </div>
+
           <div className="space-y-2">
             <label htmlFor="token" className="text-sm font-medium flex items-center gap-2">
               <Key className="w-4 h-4 text-muted-foreground" />
