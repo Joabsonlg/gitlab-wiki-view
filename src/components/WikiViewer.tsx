@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { GitLabService } from '@/services/gitlab';
 import type { GitLabProject, GitLabWikiPage, GitLabWikiPageContent } from '@/types/gitlab';
 
@@ -81,6 +82,7 @@ export function WikiViewer({ project, gitlabService, onBack, onLogout }: WikiVie
               <ArrowLeft className="mr-2 h-4 w-4" />
               Voltar aos Projetos
             </Button>
+            <ThemeToggle />
             <Button
               variant="ghost"
               onClick={onLogout}

@@ -3,6 +3,7 @@ import { Settings, Check, X, Loader2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { GitLabService } from '@/services/gitlab';
 import { toast } from 'sonner';
 import type { GitLabGroup } from '@/types/gitlab';
@@ -104,6 +105,8 @@ export function GroupSettings({ gitlabService, onBack }: GroupSettingsProps) {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
+          <div className="flex-1" />
+          <ThemeToggle />
         </div>
 
         <Card>

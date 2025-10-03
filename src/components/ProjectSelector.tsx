@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { GitLabService } from '@/services/gitlab';
 import type { GitLabProject } from '@/types/gitlab';
 
@@ -361,6 +362,7 @@ export function ProjectSelector({ gitlabService, onProjectSelect, onLogout }: Pr
             <RefreshCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
             {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
           </Button>
+          <ThemeToggle />
           <Button
             onClick={onLogout}
             className="h-12 px-6"
