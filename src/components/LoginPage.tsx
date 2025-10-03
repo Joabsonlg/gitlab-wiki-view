@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { GitLabService } from '@/services/gitlab';
 
 interface LoginPageProps {
-  onLogin: (token: string, gitlabUrl: string) => void;
+  onLogin: (token: string, gitlabUrl: string) => Promise<boolean>;
 }
 
 export function LoginPage({ onLogin }: LoginPageProps) {
@@ -31,12 +31,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     setError('');
 
     try {
-      const gitlabService = new GitLabService(token, gitlabUrl);
-      const isValid = await gitlabService.validateToken();
-
-      if (isValid) {
-        onLogin(token, gitlabUrl);
-      } else {
+      const success = await onLogin(token, gitlabUrl);
+      
+      if (!success) {
         setError('Token inválido. Verifique e tente novamente.');
       }
     } catch (err) {

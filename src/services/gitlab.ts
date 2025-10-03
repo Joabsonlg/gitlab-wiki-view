@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { GitLabProject, GitLabWikiPage, GitLabWikiPageContent } from '@/types/gitlab';
+import type { GitLabProject, GitLabWikiPage, GitLabWikiPageContent, GitLabGroup } from '@/types/gitlab';
 
 export class GitLabService {
   private token: string;
@@ -60,6 +60,38 @@ export class GitLabService {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  async getGroups(): Promise<GitLabGroup[]> {
+    try {
+      // Buscar todos os grupos (incluindo subgrupos)
+      const allGroups: GitLabGroup[] = [];
+      let page = 1;
+      let hasMore = true;
+
+      while (hasMore && page <= 10) { // Limitar a 10 páginas para evitar loops infinitos
+        const response = await this.axiosInstance.get('/groups', {
+          params: {
+            per_page: 100,
+            page: page,
+            order_by: 'name',
+            all_available: true, // Incluir todos os grupos disponíveis
+          },
+        });
+
+        const groups = response.data as GitLabGroup[];
+        allGroups.push(...groups);
+
+        // Verificar se há mais páginas
+        hasMore = groups.length === 100;
+        page++;
+      }
+
+      return allGroups;
+    } catch (error) {
+      console.error('Erro ao buscar grupos:', error);
+      return [];
     }
   }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, FileText, AlertCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, FileText, AlertCircle, Loader2, LogOut } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
@@ -12,9 +12,10 @@ interface WikiViewerProps {
   project: GitLabProject;
   gitlabService: GitLabService;
   onBack: () => void;
+  onLogout: () => void;
 }
 
-export function WikiViewer({ project, gitlabService, onBack }: WikiViewerProps) {
+export function WikiViewer({ project, gitlabService, onBack, onLogout }: WikiViewerProps) {
   const [wikiPages, setWikiPages] = useState<GitLabWikiPage[]>([]);
   const [selectedPage, setSelectedPage] = useState<GitLabWikiPageContent | null>(null);
   const [isLoadingPages, setIsLoadingPages] = useState(true);
@@ -71,14 +72,24 @@ export function WikiViewer({ project, gitlabService, onBack }: WikiViewerProps) 
       {/* Sidebar */}
       <aside className="w-80 bg-sidebar border-r border-sidebar-border flex flex-col">
         <div className="p-4 border-b border-sidebar-border space-y-3">
-          <Button
-            variant="ghost"
-            onClick={onBack}
-            className="w-full justify-start"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar aos Projetos
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={onBack}
+              className="flex-1 justify-start"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar aos Projetos
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onLogout}
+              size="sm"
+              className="px-3"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
           <div>
             <h2 className="font-semibold text-lg truncate">{project.name}</h2>
             <p className="text-xs text-muted-foreground truncate">
